@@ -115,7 +115,7 @@ layer_params = {
   shortname: 'jenkins',
   custom_security_group_ids: [ security_group ],
   packages: %w{readline-devel libyaml-devel libffi-devel  mlocate},
-  custom_recipes: { setup: [ "python", "jenkins::server", "rvm::user_install", "jenkins-configuration::jobs", "jenkins-configuration::views", "jenkins-configuration::config" ] }
+  custom_recipes: { setup: [ "firefox", "python", "jenkins::server", "rvm::user_install", "jenkins-configuration::jobs", "jenkins-configuration::views", "jenkins-configuration::config" ] }
 }
 
 layer = ops.create_layer layer_params
