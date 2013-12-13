@@ -135,4 +135,4 @@ while (opts[:wait] and !online)
   end
 end
 
-File.open("stack_id", 'w') {|f| f.write(stack_id) }
+File.open("stack_id", 'w') {|f| f.write(stack.stack_id) }
