@@ -92,7 +92,7 @@ custom_json = <<END
 END
 
 stack_params = {
-  name: "Jonny's Jenkins Server", 
+  name: "THIS ONE SHOULD WORK", 
   region: aws_region, 
   default_os: 'Amazon Linux',
   service_role_arn: 'arn:aws:iam::324320755747:role/aws-opsworks-service-role', 
@@ -115,7 +115,7 @@ layer_params = {
   shortname: 'jenkins',
   custom_security_group_ids: [ security_group ],
   packages: %w{readline-devel libyaml-devel libffi-devel mlocate},
-  custom_recipes: { setup: [ "jenkins::server", "jenkins-configuration::sleep", "jenkins-configuration::jobs", "jenkins-configuration::views"] }
+  custom_recipes: { setup: %w{firefox python jenkins::server rvm::user_install jenkins-configuration::jobs jenkins-configuration::views} }
 }
 
 layer = ops.create_layer layer_params
