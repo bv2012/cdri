@@ -2,15 +2,42 @@ $stdout.sync = true
 
 require 'aws-sdk-core'
 require 'pp'
+require 'trollop'
 
-Aws.config = { region: 'us-east-1' }
-ssh_key_name = "jonny-labs-west2"
-aws_region = 'us-west-2'
-aws_az = "us-west-2a"
+opts = Trollop::options do
+  opt :region, 'The AWS region to use', :type => String, :default => "us-west-2"
+  opt :zone, 'The AWS availability zone to use', :type => String, :default => "us-west-2a"
+  opt :size, 'The instance size to use', :type => String, :default => "c3.large"
+end
+
+
+aws_region = opts[:region]
+aws_az = opts[:zone]
 instance_type = "c3.large"
-security_group = "sg-0ef5c53e"
+Aws.config = { region: aws_region, http_wire_trace: false }
+ops = Aws::OpsWorks.new region: "us-east-1"
+@ec2 = Aws::EC2.new
 
-ops = Aws::OpsWorks.new 
+
+def create_ec2_keypair
+  name = "jenkins-key-pair-#{Time.now.strftime "%Y%m%d%H%M%S"}"
+  @ec2.create_key_pair key_name: name
+  return name
+  # "jonny-labs-west2"
+end
+
+def create_security_group
+  name = "jenkins-sg-#{Time.now.strftime "%Y%m%d%H%M%S"}"
+  sg = @ec2.create_security_group group_name: name, description: "Security Group for the Jenkins server created as part of Stelligent's CD Blueprints. If no instances are using this security group, it is safe to delete."
+  return sg[:group_id]
+  # "sg-0ef5c53e"
+end
+
+
+
+ssh_key_name = create_ec2_keypair
+security_group = create_security_group
+
 
 custom_json = <<END
 { 
@@ -105,6 +132,8 @@ stack_params = {
     }
 }
 
+Aws.config = { region: "us-east-1", http_wire_trace: false }
+
 stack = ops.create_stack stack_params
 # pp stack
 
@@ -118,6 +147,9 @@ layer_params = {
   # custom_recipes: { setup: %w{firefox python jenkins::server rvm::user_install jenkins-configuration::jobs jenkins-configuration::views} }
   custom_recipes: { setup: %w{firefox jenkins::server rvm::user_install jenkins-configuration::jobs jenkins-configuration::views} }
 }
+
+
+
 
 layer = ops.create_layer layer_params
 # pp layer
