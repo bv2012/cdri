@@ -18,6 +18,24 @@
                     "GroupId"
                 ]
             }
+        },
+        "ServiceRoleOutput" : {
+            "Description" : "The ARN of the Service Role",
+            "Value" : {
+                "Fn::GetAtt": [
+                    "ServiceRole",
+                    "Arn"
+                ]
+            }
+        },
+        "EC2RoleOutput" : {
+            "Description" : "The ARN of the EC2 Role",
+            "Value" : {
+                "Fn::GetAtt": [
+                    "EC2Role",
+                    "Arn"
+                ]
+            }
         }
     },
     "Resources": {
