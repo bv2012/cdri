@@ -28,12 +28,12 @@ def stack_in_progress cfn_stack_name
   return PROGRESS_STATUSES.include? status
 end
 
-def create_ec2_keypair
-  name = "jenkins-key-pair-#{@timestamp}"
-  ec2 = Aws::EC2.new 
-  ec2.create_key_pair key_name: name
-  return name
-end
+# def create_ec2_keypair
+#   name = "jenkins-key-pair-#{@timestamp}"
+#   ec2 = Aws::EC2.new 
+#   ec2.create_key_pair key_name: name
+#   return name
+# end
 
 def print_and_flush(str)
   print str
@@ -76,7 +76,7 @@ ssh_security_group = resources["SSHSecurityGroupOutput"]
 servicerolearn = resources["ServiceRoleOutput"]
 ec2rolearn = resources["EC2RoleOutput"]
 
-ssh_key_name = create_ec2_keypair
+# ssh_key_name = create_ec2_keypair
 
 ops = Aws::OpsWorks.new region: "us-east-1"
 
@@ -199,7 +199,7 @@ instance_params = {
   layer_ids: [layer.layer_id],
   instance_type: instance_type,
   hostname: "jenkins",
-  ssh_key_name: ssh_key_name,
+  # ssh_key_name: ssh_key_name,
   install_updates_on_boot: true,
   availability_zone: aws_az,
   architecture: 'x86_64',
