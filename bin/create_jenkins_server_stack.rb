@@ -43,6 +43,7 @@ end
 opts = Trollop::options do
   opt :region, 'The AWS region to use', :type => String, :default => "us-west-2"
   opt :zone, 'The AWS availability zone to use', :type => String, :default => "us-west-2a"
+  opt :source, 'The repository where the source to build resides', :type => String, :default => "https://github.com/stelligent/canaryboard.git"
   opt :size, 'The instance size to use', :type => String, :default => "c3.large"
 end
 
@@ -100,6 +101,9 @@ custom_json = <<END
                 "version": "2.0.0.rc2"
             }
         ]
+    },
+    "pipeline": {
+      "source" : #{opts[:source]}
     },
 
     "jenkins": {
