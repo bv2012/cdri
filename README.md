@@ -36,3 +36,7 @@ The default region is us-west-2. If you’re in North America, this is probably 
 The source repo is configurable, with a couple of caveats. The repository must be a github repository, and it must be a public repo. It is possible to have Jenkins connect to really any other repository type, and it is possible to set up username / password information or SSH keys to authenticate against a private repo. Both increase complexity, so to keep things simple, we’ve restricted the script to only run against public github repositories.
 
 Finally, you can configure the size of the EC2 instance that the Jenkins server will run on. A list of instance sizes and prices is available here. Note that anything smaller that a c3.large instance will take considerably longer to start up, but shouldn’t impact your ability to run builds at all. (However, Jenkins is a bit too heavy to run on a t1.micro instance, so don’t try going that low; it won’t work.) 
+
+questions?
+====
+Feel free to open issues or make pull requests. You can also reach out on twitter: @jonathansywulak
