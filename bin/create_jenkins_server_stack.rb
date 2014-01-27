@@ -4,17 +4,6 @@ require 'aws-sdk-core'
 require 'pp'
 require 'trollop'
 
-SUCCESS_STATUSES =  [ "CREATE_COMPLETE",
-  "UPDATE_COMPLETE" ]
-
-FAILURE_STATUSES =  [ "CREATE_FAILED",
-  "ROLLBACK_FAILED",
-  "ROLLBACK_COMPLETE",
-  "DELETE_FAILED",
-  "UPDATE_ROLLBACK_FAILED",
-  "UPDATE_ROLLBACK_COMPLETE",
-  "DELETE_COMPLETE" ]
-
 PROGRESS_STATUSES = [ "CREATE_IN_PROGRESS",
   "ROLLBACK_IN_PROGRESS",
   "DELETE_IN_PROGRESS",
@@ -28,13 +17,6 @@ def stack_in_progress cfn_stack_name
   return PROGRESS_STATUSES.include? status
 end
 
-# def create_ec2_keypair
-#   name = "jenkins-key-pair-#{@timestamp}"
-#   ec2 = Aws::EC2.new 
-#   ec2.create_key_pair key_name: name
-#   return name
-# end
-
 def print_and_flush(str)
   print str
   $stdout.flush
@@ -43,7 +25,7 @@ end
 opts = Trollop::options do
   opt :region, 'The AWS region to use', :type => String, :default => "us-west-2"
   opt :zone, 'The AWS availability zone to use', :type => String, :default => "us-west-2a"
-  opt :source, 'The repository where the source to build resides', :type => String, :default => "https://github.com/stelligent/canaryboard.git"
+  opt :source, 'The github repo where the source to build resides (will not work with anything but github!)', :type => String, :default => "https://github.com/stelligent/canaryboard.git"
   opt :size, 'The instance size to use', :type => String, :default => "c3.large"
 end
 
@@ -103,7 +85,7 @@ custom_json = <<END
         ]
     },
     "pipeline": {
-      "source" : #{opts[:source]}
+      "source" : "#{opts[:source]}"
     },
 
     "jenkins": {
@@ -166,6 +148,8 @@ custom_json = <<END
 }
 END
 
+# puts custom_json
+
 stack_params = {
   name: "Jenkins Server #{@timestamp}", 
   region: aws_region, 
@@ -193,8 +177,9 @@ layer_params = {
   shortname: 'jenkins',
   custom_security_group_ids: [ jenkins_security_group, ssh_security_group ],
   packages: %w{readline-devel libyaml-devel libffi-devel mlocate},
-  custom_recipes: { setup: %w{firefox jenkins::server jenkins::proxy rvm::user_install jenkins-configuration::jobs jenkins-configuration::views} }
+  custom_recipes: { setup: %w{firefox jenkins::server jenkins::proxy rvm::user_install jenkins-configuration::jobs jenkins-configuration::views opsworks_nodejs} }
 }
+
 
 puts "creating OpsWorks layer..."
 layer = ops.create_layer layer_params
