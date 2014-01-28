@@ -12,14 +12,16 @@ This repo contains a couple different items for creating a Jenkins server in Ama
 
 how to use this repo:
 ====
-You'll need git and ruby installed, first.
+You'll need git, ruby, and bundler installed.
 
 Then you'll want to do is clone the Stelligent CDRI repo and run the Jenkins server script:
 
+    bundle install
     git clone https://github.com/stelligent/cdri.git
     ruby bin/create_jenkins_server_stack.rb 
 
 The script will take a couple of minutes to lay down everything it needs to set up a Jenkins server. After the script completes, though, it'll still take a bit of time for the Jenkins server to build itself and be ready to go. 
+
 The script actually has a couple options you may want to take advantage of:
 
     $ ruby bin/create_jenkins_server_stack.rb --help
