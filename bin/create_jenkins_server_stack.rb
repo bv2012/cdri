@@ -185,7 +185,7 @@ layer_params = {
   shortname: 'jenkins',
   custom_security_group_ids: [ jenkins_security_group, ssh_security_group ],
   packages: %w{readline-devel libyaml-devel libffi-devel mlocate},
-  custom_recipes: { setup: %w{firefox jenkins::server jenkins::proxy rvm::user_install jenkins-configuration::jobs jenkins-configuration::views opsworks_nodejs sudoers} }
+  custom_recipes: { setup: %w{ jenkins::server jenkins::proxy rvm::user_install jenkins-configuration::jobs jenkins-configuration::views opsworks_nodejs } }
 }
 
 puts "creating OpsWorks layer..."
