@@ -1,9 +1,9 @@
 $stdout.sync = true
 
 require 'aws-sdk-core'
-require 'pp'
 require 'trollop'
 
+# we set up a CLoudFormation stack, and we need to know if it's done yet. These are the statuses indicating "not done yet"
 PROGRESS_STATUSES = [ "CREATE_IN_PROGRESS",
   "ROLLBACK_IN_PROGRESS",
   "DELETE_IN_PROGRESS",
@@ -12,16 +12,19 @@ PROGRESS_STATUSES = [ "CREATE_IN_PROGRESS",
   "UPDATE_ROLLBACK_IN_PROGRESS",
   "UPDATE_ROLLBACK_COMPLETE_CLEANUP_IN_PROGRESS" ]
 
+# checks to see if the cfn stack is done yet
 def stack_in_progress cfn_stack_name
   status = @cfn.describe_stacks(stack_name: cfn_stack_name).stacks.first[:stack_status]
   return PROGRESS_STATUSES.include? status
 end
 
+# used to print status without newlines
 def print_and_flush(str)
   print str
   $stdout.flush
 end
 
+# using trollop to do command line options
 opts = Trollop::options do
   opt :region, 'The AWS region to use', :type => String, :default => "us-west-2"
   opt :zone, 'The AWS availability zone to use', :type => String, :default => "us-west-2a"
@@ -29,14 +32,18 @@ opts = Trollop::options do
   opt :size, 'The instance size to use', :type => String, :default => "c3.large"
 end
 
+
+# alright, let's do this.
 puts "You're creating a Jenkins instance in the #{opts[:region]} region. (size: #{opts[:size]})"
 @timestamp = Time.now.strftime "%Y%m%d%H%M%S"
 
 aws_region = opts[:region]
 aws_az = opts[:zone]
 instance_type = opts[:size]
+# curious what the AWS calls look like? set http_wire_trace to true.
 Aws.config = { region: aws_region, http_wire_trace: false }
 
+# create a cfn stack with all the resources the opsworks stack will need
 @cfn = Aws::CloudFormation.new 
 cfn_stack_name = "Jenkins-Supporting-Resources-#{@timestamp}"
 @cfn.create_stack stack_name: cfn_stack_name, template_body: File.open("./conf/jenkins_resources.template", "rb").read, capabilities: ["CAPABILITY_IAM"], timeout_in_minutes: 10
@@ -49,6 +56,7 @@ end
 
 puts
 
+# get the resource names out of the cfn stack so we can pass themto opsworks
 resources = {}
 @cfn.describe_stacks(stack_name: cfn_stack_name).stacks.first[:outputs].each do |output|
   resources[output[:output_key]] = output[:output_value]
@@ -59,10 +67,10 @@ ssh_security_group = resources["SSHSecurityGroupOutput"]
 servicerolearn = resources["ServiceRoleOutput"]
 ec2rolearn = resources["EC2RoleOutput"]
 
-# ssh_key_name = create_ec2_keypair
-
+# create the opsworks stack
 ops = Aws::OpsWorks.new region: "us-east-1"
 
+# opsworks configuration is passed in as json
 custom_json = <<END
 { 
     "rvm": {
@@ -148,8 +156,7 @@ custom_json = <<END
 }
 END
 
-# puts custom_json
-
+# create a new opsworks stack
 stack_params = {
   name: "Jenkins Server #{@timestamp}", 
   region: aws_region, 
@@ -164,12 +171,13 @@ stack_params = {
     }
 }
 
+# opsworks is "regionless" but really "only in us-east-1"
 Aws.config = { region: "us-east-1", http_wire_trace: false }
 
 puts "creating OpsWorks stack..."
 stack = ops.create_stack stack_params
-# pp stack
 
+# create layer for Jenkins
 layer_params = {
   stack_id: stack.stack_id, 
   type: 'custom',
@@ -177,20 +185,23 @@ layer_params = {
   shortname: 'jenkins',
   custom_security_group_ids: [ jenkins_security_group, ssh_security_group ],
   packages: %w{readline-devel libyaml-devel libffi-devel mlocate},
-  custom_recipes: { setup: %w{firefox jenkins::server jenkins::proxy rvm::user_install jenkins-configuration::jobs jenkins-configuration::views opsworks_nodejs} }
+  custom_recipes: { setup: %w{firefox jenkins::server jenkins::proxy rvm::user_install jenkins-configuration::jobs jenkins-configuration::views opsworks_nodejs sudoers} }
 }
-
 
 puts "creating OpsWorks layer..."
 layer = ops.create_layer layer_params
-# pp layer
 
+# create jenkins instance
 instance_params = {
   stack_id: stack.stack_id,
   layer_ids: [layer.layer_id],
   instance_type: instance_type,
   hostname: "jenkins",
-  # ssh_key_name: ssh_key_name,
+# SSHing into OpsWorks stacks isn't recommended, so by default, you can't.
+# If you want to, though, you can set your SSH keyname here and then you'll be able to get in.
+# SSH Key must already exist, and must be in the same region as the instance.
+#
+#  ssh_key_name: "keyname here",
   install_updates_on_boot: true,
   availability_zone: aws_az,
   architecture: 'x86_64',
@@ -199,7 +210,7 @@ instance_params = {
 
 puts "creating OpsWorks instance..."
 instance = ops.create_instance instance_params
-# pp instance
 
+# start the instance and if the start command succeeds, we're good. It'll take a good while for the instance to boot up, tho.
 ops.start_instance instance_id: instance.instance_id
 puts "Instance started. It's now running the configuration and should be up in about 30 minutes, give or take."
