@@ -16,8 +16,9 @@ You'll need git, ruby, and bundler installed.
 
 Then you'll want to do is clone the Stelligent CDRI repo and run the Jenkins server script:
 
-    bundle install
     git clone https://github.com/stelligent/cdri.git
+    cd cdri
+    bundle install
     ruby bin/create_jenkins_server_stack.rb 
 
 The script will take a couple of minutes to lay down everything it needs to set up a Jenkins server. After the script completes, though, it'll still take a bit of time for the Jenkins server to build itself and be ready to go. 
