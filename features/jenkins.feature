@@ -13,7 +13,7 @@ Feature: Scripted install of Jenkins
 
     Scenario: Is ruby 1.9.3 installed
         When I run "ruby -v"
-        Then I should see "ruby 2.0.0"
+        Then I should see "ruby 1.9.3"
 
     Scenario: Is the server listening on port 80?
         When I run "netstat -antu | grep 80"
