@@ -12,10 +12,12 @@ This repo contains a couple different items for creating a Jenkins server in Ama
 
 how to use this repo:
 ====
-You'll need git, ruby, and bundler installed.
+You'll need git, ruby, and bundler installed. You'll also need your AWS credentials exported into the environment. 
 
 Then you'll want to do is clone the Stelligent CDRI repo and run the Jenkins server script:
 
+    export AWS_ACCESS_KEY_ID=[your access key]
+    export AWS_SECRET_ACCESS_KEY=[your secret key]
     git clone https://github.com/stelligent/cdri.git
     cd cdri
     bundle install
