@@ -10,9 +10,6 @@ end
 
 # Run tests remotely using ssh
 Given(/^I am sshed into the \w*\s*environment$/) do
-  ENV["host"] = "54.214.175.22"
-  ENV["user"] = "ec2-user"
-  ENV["key"]  = "~/pem/jonny-labs-west2"
   run_cmd
 end
 
