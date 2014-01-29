@@ -5,7 +5,7 @@ Feature: Scripted install of Jenkins
     so that that my Jenkins server will work as expected
 
     Background:
-        Given I am sshed into the Jenkins environment
+        Given I am testing the local environment
 
     Scenario: Is the hostname set correctly?
         When I run "hostname"
