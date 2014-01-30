@@ -29,7 +29,7 @@ opts = Trollop::options do
   opt :region, 'The AWS region to use', :type => String, :default => "us-west-2"
   opt :zone, 'The AWS availability zone to use', :type => String, :default => "us-west-2a"
   opt :source, 'The github repo where the source to build resides (will not work with anything but github!)', :type => String, :default => "https://github.com/stelligent/canaryboard.git"
-  opt :size, 'The instance size to use', :type => String, :default => "c3.large"
+  opt :size, 'The instance size to use', :type => String, :default => "m1.large"
 end
 
 
@@ -155,11 +155,20 @@ custom_json = <<END
   }
 END
 
+# detect whether or not the account has a default VPC set up. If so, use that.
+vpc_id = nil
+@ec2 = Aws::EC2.new
+default_vpc = not(@ec2.describe_account_attributes(attribute_names: ["default-vpc"]).nil?)
+if (default_vpc)
+  vpc_id = @ec2.describe_account_attributes(attribute_names: ["default-vpc"]).account_attributes.first.attribute_values.first.attribute_value
+end
+
+
 # create a new opsworks stack
 stack_params = {
   name: "Jenkins Server #{@timestamp}", 
   region: aws_region, 
-  # vpc_id: "vpc-e5455b87",
+  vpc_id: vpc_id,
   # default_subnet_id: "subnet-7087bc04",
   default_os: 'Amazon Linux',
   service_role_arn: servicerolearn,
@@ -184,8 +193,7 @@ layer_params = {
   type: 'custom',
   name: 'Jenkins Server Layer',
   shortname: 'jenkins',
-  # custom_security_group_ids: [ jenkins_security_group, ssh_security_group ],
-  custom_security_group_ids: [  ],
+  custom_security_group_ids: [ jenkins_security_group, ssh_security_group ],
   packages: %w{readline-devel libyaml-devel libffi-devel mlocate},
   custom_recipes: { setup: %w{ jenkins::server jenkins::proxy rvm::user_install jenkins-configuration::jobs jenkins-configuration::views opsworks_nodejs } }
 }
