@@ -28,11 +28,21 @@
                 ]
             }
         },
+        
         "EC2RoleOutput" : {
             "Description" : "The ARN of the EC2 Role",
             "Value" : {
                 "Fn::GetAtt": [
                     "EC2Role",
+                    "Arn"
+                ]
+            }
+        },
+        "EC2RoleInstanceProfileOutput" : {
+            "Description" : "The ARN of the EC2 Role Instance Profile",
+            "Value" : {
+                "Fn::GetAtt": [
+                    "EC2RoleInstanceProfile",
                     "Arn"
                 ]
             }
@@ -48,7 +58,7 @@
                             "Effect": "Allow",
                             "Principal": {
                                 "Service": [
-                                    "ec2.amazonaws.com"
+                                    "opsworks.amazonaws.com"
                                 ]
                             },
                             "Action": [
@@ -119,26 +129,7 @@
                 "Path": "/"
             }
         },
-        "EC2RolePolicies": {
-            "Type": "AWS::IAM::Policy",
-            "Properties": {
-                "PolicyName": "root",
-                "PolicyDocument": {
-                    "Statement": [
-                        {
-                            "Effect": "Allow",
-                            "Action": "*",
-                            "Resource": "*"
-                        }
-                    ]
-                },
-                "Roles": [
-                    {
-                        "Ref": "EC2Role"
-                    }
-                ]
-            }
-        },
+        
         "EC2RoleInstanceProfile": {
             "Type": "AWS::IAM::InstanceProfile",
             "Properties": {
