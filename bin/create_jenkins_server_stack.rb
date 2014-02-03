@@ -155,21 +155,12 @@ custom_json = <<END
   }
 END
 
-# detect whether or not the account has a default VPC set up. If so, use that.
-vpc_id = nil
-@ec2 = Aws::EC2.new
-default_vpc = not(@ec2.describe_account_attributes(attribute_names: ["default-vpc"]).nil?)
-if (default_vpc)
-  vpc_id = @ec2.describe_account_attributes(attribute_names: ["default-vpc"]).account_attributes.first.attribute_values.first.attribute_value
-end
 
 
 # create a new opsworks stack
 stack_params = {
   name: "Jenkins Server #{@timestamp}", 
   region: aws_region, 
-  vpc_id: vpc_id,
-  # default_subnet_id: "subnet-7087bc04",
   default_os: 'Amazon Linux',
   service_role_arn: servicerolearn,
   default_instance_profile_arn: ec2rolearn,
@@ -180,6 +171,13 @@ stack_params = {
       url: 'https://github.com/stelligent/jenkins_chef_cookbooks.git'
     }
 }
+
+# detect whether or not the account has a default VPC set up. If so, use that.
+@ec2 = Aws::EC2.new
+default_vpc = @ec2.describe_account_attributes(attribute_names: ["default-vpc"]) == "none"
+if default_vpc
+  stack_params[:vpc_id] = @ec2.describe_account_attributes(attribute_names: ["default-vpc"]).account_attributes.first.attribute_values.first.attribute_value
+end
 
 # opsworks is "regionless" but really "only in us-east-1"
 Aws.config = { region: "us-east-1", http_wire_trace: false }
@@ -223,4 +221,4 @@ instance = ops.create_instance instance_params
 
 # start the instance and if the start command succeeds, we're good. It'll take a good while for the instance to boot up, tho.
 ops.start_instance instance_id: instance.instance_id
-puts "Instance started. It's now running the configuration and should be up in about 30 minutes, give or take."
+puts "Instance started. It's now running the configuration and should be up in about 15-45 minutes, depending on instance size."
