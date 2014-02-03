@@ -7,6 +7,14 @@ Feature: Scripted install of Jenkins
     Background:
         Given I am testing the local environment
 
+    Scenario: The OpsWorks stack is set up correctly
+        When I lookup the OpsWorks stack for the local machine
+        Then I should a stack with one layer
+        And  the layer should be named "Jenkins"
+        And  I should see a layer with one instance
+        And  the instance should be named "jenkins"
+        And  the instance should be running
+
     Scenario: Is the hostname set correctly?
         When I run "hostname"
         Then I should see "jenkins"
@@ -25,12 +33,16 @@ Feature: Scripted install of Jenkins
         When I run "service jenkins status"
         Then I should see "is running..."
 
-    Scenario: Are the pipeline jobs present?
+    Scenario Outline: Are the pipeline jobs present?
         When I run "ls /var/lib/jenkins/jobs"
-        Then I should see "acceptance-stage"
-        Then I should see "capacity-stage"
-        Then I should see "commit-stage"
-        Then I should see "exploratory-stage"
-        Then I should see "preproduction-stage"
-        Then I should see "production-stage"
-        Then I should see "trigger-stage"
+        Then I should see <jobname>
+
+        Examples: 
+            | jobname               |
+            | "acceptance-stage"    |
+            | "capacity-stage"      |
+            | "commit-stage"        |
+            | "exploratory-stage"   |
+            | "preproduction-stage" |
+            | "production-stage"    |
+            | "trigger-stage"       |
