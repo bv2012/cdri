@@ -5,7 +5,7 @@ When(/^I lookup the OpsWorks stack for the local machine$/) do
   region = `wget -q -O - http://169.254.169.254/latest/meta-data/placement/availability-zon/.$//' 's/`
   ec2 = Aws::EC2.new region: region
   
-  @opsworks = Aws::OpsWorks.new "us-east-1"
+  @opsworks = Aws::OpsWorks.new region: "us-east-1"
   
   @stack = nil
   @opsworks.describe_stacks.stacks.each do |stack| 
