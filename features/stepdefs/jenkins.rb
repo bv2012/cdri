@@ -7,6 +7,8 @@ When(/^I lookup the OpsWorks stack for the local machine$/) do
   @opsworks = Aws::OpsWorks.new region: "us-east-1"
   
   @stack = nil
+  puts "describe stacks:"
+  puts @opsworks.describe_stacks
   @opsworks.describe_stacks.stacks.each do |stack| 
     puts "----------------------------"
     puts stack
