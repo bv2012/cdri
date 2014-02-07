@@ -10,7 +10,7 @@ Feature: Scripted install of Jenkins
     Scenario: The OpsWorks stack is set up correctly
         When I lookup the OpsWorks stack for the local machine
         Then I should see a stack with one layer
-        And  the layer should be named "Jenkins"
+        And  the layer should be named "Jenkins Server Layer"
         And  I should see a layer with one instance
         And  the instance should be named "jenkins"
         And  the instance should be running
