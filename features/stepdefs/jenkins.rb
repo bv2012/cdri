@@ -7,21 +7,13 @@ When(/^I lookup the OpsWorks stack for the local machine$/) do
   @opsworks = Aws::OpsWorks.new region: "us-east-1"
   
   @stack = nil
-  # puts "describe stacks:"
-  # puts @opsworks.describe_stacks
   @opsworks.describe_stacks.stacks.each do |stack| 
-    # puts "----------------------------"
-    # puts stack
     @opsworks.describe_instances(stack_id: stack.stack_id).instances.each do |instance| 
-      # puts "=============================="
-      # puts instance
       if instance.ec2_instance_id == instance_id
         @stack = stack
         break
       end
-      # puts "=============================="
     end
-    # puts "----------------------------"
   end
   @stack.should_not be_nil
 end
