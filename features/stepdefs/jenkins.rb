@@ -18,6 +18,7 @@ When(/^I lookup the OpsWorks stack for the local machine$/) do
       end
     end
   end
+  @stack.should_not be_nil
 end
 
 Then(/^I should see a stack with one layer$/) do
