@@ -27,7 +27,7 @@ Then(/^the layer should be named "(.*?)"$/) do |name|
   layer_name = @opsworks.describe_layers(stack_id: @stack.stack_id).layers.first.name.to_s
   puts "layer_name: #{layer_name}"
   puts "name: #{name}"
-  expect(layer_name.to_s).to include(name.to_s), "The Jenkins stack should be '#{name}' but is actually '#{layer_name}'"
+  expect(layer_name.to_s).to eq(name.to_s), "The Jenkins stack should be '#{name}' but is actually '#{layer_name}'"
 end
 
 Then(/^I should see a layer with one instance$/) do
@@ -39,7 +39,7 @@ end
 Then(/^the instance should be named "(.*?)"$/) do |name|
   layer_id = @opsworks.describe_layers(stack_id: @stack.stack_id).layers.first.layer_id
   instance_name = @opsworks.describe_instances(layer_id: layer_id).instances.first.name
-  expect(instance_name.to_s).to include(name.to_s), "The Jenkins instance should be named #{name.to_s}, but is actually #{instance_name.to_s}"
+  expect(instance_name.to_s).to eq(name.to_s), "The Jenkins instance should be named #{name.to_s}, but is actually #{instance_name.to_s}"
 end
 
 Then(/^the instance should be running$/) do
