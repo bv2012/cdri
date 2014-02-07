@@ -18,7 +18,6 @@ When(/^I lookup the OpsWorks stack for the local machine$/) do
   @stack.should_not be_nil
 end
 
-# "dbff3ed5-f50a-4f4d-9773-7680627d70aa"
 Then(/^I should see a stack with one layer$/) do
   layers = @opsworks.describe_layers(stack_id: @stack.stack_id).layers.size
   expect(layers).to be(1), "The Jenkins stack should only have one layer, but has #{layers}"
@@ -26,8 +25,6 @@ end
 
 Then(/^the layer should be named "(.*?)"$/) do |name|
   layer_name = @opsworks.describe_layers(stack_id: @stack.stack_id).layers.first.name
-  puts "layer_name: #{layer_name}"
-  puts "name: #{name}"
   expect(layer_name.to_s).to eq(name.to_s), "The Jenkins stack should be '#{name}' but is actually '#{layer_name}'"
 end
 
