@@ -18,7 +18,7 @@ When(/^I lookup the OpsWorks stack for the local machine$/) do
   @stack.should_not be_nil
 end
 
-
+# "dbff3ed5-f50a-4f4d-9773-7680627d70aa"
 Then(/^I should see a stack with one layer$/) do
   layers = @opsworks.describe_layers(stack_id: @stack.stack_id).layers.size
   expect(layers).to be(1), "The Jenkins stack should only have one layer, but has #{layers}"
@@ -46,6 +46,6 @@ end
 Then(/^the instance should be running$/) do
   layer_id = @opsworks.describe_layers(stack_id: @stack.stack_id).layers.first.layer_id
   status = @opsworks.describe_instances(layer_id: layer_id).instances.first.status
-  expect(status).to be("online"), "The Jenkins instance should be named online, but is actually #{status}"
+  expect(status).to eq("online"), "The Jenkins instance should be named online, but is actually #{status}"
 end
 
