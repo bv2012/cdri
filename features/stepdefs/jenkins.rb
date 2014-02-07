@@ -2,21 +2,24 @@ require 'aws-sdk-core'
 
 When(/^I lookup the OpsWorks stack for the local machine$/) do
   instance_id = `wget -q -O - http://169.254.169.254/latest/meta-data/instance-id`
-  region = `wget -q -O - http://169.254.169.254/latest/meta-data/placement/availability-zon/.$//' 's/`
   puts "instance id: #{instance_id}"
-  puts "region: #{region}"
-  ec2 = Aws::EC2.new region: region
   
   @opsworks = Aws::OpsWorks.new region: "us-east-1"
   
   @stack = nil
   @opsworks.describe_stacks.stacks.each do |stack| 
+    puts "----------------------------"
+    puts stack
     @opsworks.describe_instances(stack_id: stack.stack_id).instances.each do |instance| 
+      puts "=============================="
+      puts instance
       if instance.ec2_instance_id == instance_id
         @stack = stack
         break
       end
+      puts "=============================="
     end
+    puts "----------------------------"
   end
   @stack.should_not be_nil
 end
