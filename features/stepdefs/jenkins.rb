@@ -9,7 +9,7 @@ When(/^I lookup the OpsWorks stack for the local machine$/) do
   
   @stack = nil
   @opsworks.describe_stacks.stacks.each do |stack| 
-    @opsworks.describe_instances(stack_id: stack.stack_id).instances.each do |instance| 
+    @opsworks.describe_instances(stack_id: @stack.stack_id).instances.each do |instance| 
       if instance.ec2_instance_id == instance_id
         @stack = stack
         break
