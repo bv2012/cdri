@@ -129,7 +129,46 @@
                 "Path": "/"
             }
         },
-        
+        "EC2RolePolicies": {
+            "Type": "AWS::IAM::Policy",
+            "Properties": {
+                "PolicyName": "JenkinsServerPolicy",
+                "PolicyDocument": {
+                    "Statement": [
+                        {
+                            "Action": [
+                                "opsworks:*",
+                                "ec2:DescribeAvailabilityZones",
+                                "ec2:DescribeKeyPairs",
+                                "ec2:DescribeSecurityGroups",
+                                "ec2:DescribeAccountAttributes",
+                                "ec2:DescribeAvailabilityZones",
+                                "ec2:DescribeSecurityGroups",
+                                "ec2:DescribeSubnets",
+                                "ec2:DescribeVpcs",
+                                "elasticloadbalancing:DescribeInstanceHealth",
+                                "elasticloadbalancing:DescribeLoadBalancers",
+                                "iam:GetRolePolicy",
+                                "iam:ListInstanceProfiles",
+                                "iam:ListRoles",
+                                "iam:ListUsers",
+                                "iam:PassRole"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "*"
+                            ]
+                        }
+                    ]
+                },
+                "Roles": [
+                    {
+                        "Ref": "EC2Role"
+                    }
+                ]
+            }
+        },
+
         "EC2RoleInstanceProfile": {
             "Type": "AWS::IAM::InstanceProfile",
             "Properties": {
