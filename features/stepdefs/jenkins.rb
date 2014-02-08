@@ -2,8 +2,9 @@ require 'aws-sdk-core'
 
 When(/^I lookup the OpsWorks stack for the local machine$/) do
   instance_id = `wget -q -O - http://169.254.169.254/latest/meta-data/instance-id`
+  instance_id.should_not be_nil
   puts "instance id: #{instance_id}"
-  
+    
   @opsworks = Aws::OpsWorks.new region: "us-east-1"
   
   @stack = nil
