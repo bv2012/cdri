@@ -168,7 +168,8 @@ stack_params = {
   use_custom_cookbooks: true,
   custom_cookbooks_source: {
       type: 'git',
-      url: 'https://github.com/stelligent/jenkins_chef_cookbooks.git'
+      url: 'https://github.com/stelligent/jenkins_chef_cookbooks.git',
+      revision: 'dev'
     }
 }
 
