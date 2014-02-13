@@ -1,3 +1,6 @@
+require 'trollop'
+require 'jenkins_api_client'
+
 # using trollop to do command line options
 opts = Trollop::options do
   opt :server, 'The AWS region to use', :type => String, :default => "us-west-2"
