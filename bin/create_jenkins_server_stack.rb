@@ -114,7 +114,8 @@ custom_json = <<END
           ]
       },
       "pipeline": {
-        "source" : "#{opts[:source]}"
+        "source" : "#{opts[:source]}",
+        "jobs" : [ "trigger-stage", "commit-stage", "acceptance-stage", "capacity-stage", "exploratory-stage", "preproduction-stage", "production-stage", "jenkins-test" ]
       },
 
       "jenkins": {
