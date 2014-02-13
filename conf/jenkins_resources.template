@@ -137,22 +137,11 @@
                     "Statement": [
                         {
                             "Action": [
+                                "iam:*",
+                                "cloudformation:*",
                                 "opsworks:*",
-                                "ec2:DescribeAvailabilityZones",
-                                "ec2:DescribeKeyPairs",
-                                "ec2:DescribeSecurityGroups",
-                                "ec2:DescribeAccountAttributes",
-                                "ec2:DescribeAvailabilityZones",
-                                "ec2:DescribeSecurityGroups",
-                                "ec2:DescribeSubnets",
-                                "ec2:DescribeVpcs",
-                                "elasticloadbalancing:DescribeInstanceHealth",
-                                "elasticloadbalancing:DescribeLoadBalancers",
-                                "iam:GetRolePolicy",
-                                "iam:ListInstanceProfiles",
-                                "iam:ListRoles",
-                                "iam:ListUsers",
-                                "iam:PassRole"
+                                "ec2:*",
+                                "elasticloadbalancing:*"
                             ],
                             "Effect": "Allow",
                             "Resource": [
