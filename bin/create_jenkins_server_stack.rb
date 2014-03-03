@@ -137,6 +137,7 @@ custom_json = <<END
                      { "name" : "config-file-provider",          "version" : "2.6.2"   },
                      { "name" : "configurationslicing",          "version" : "1.38.3"  },
                      { "name" : "cucumber-reports",              "version" : "0.0.21"  },
+                     { "name" : "delivery-pipeline-plugin",      "version" : "0.6.10"  }, 
                      { "name" : "email-ext",                     "version" : "2.35.1"  }, 
                      { "name" : "envinject",                     "version" : "1.89"    },
                      { "name" : "fstrigger",                     "version" : "0.34"    },
